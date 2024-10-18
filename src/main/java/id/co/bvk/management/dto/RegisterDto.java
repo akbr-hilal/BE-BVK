@@ -16,4 +16,6 @@ public class RegisterDto {
     private String email;
     private String password;
     private String name;
+    private Boolean isGoogle;
+    private String idGoogle;
 }

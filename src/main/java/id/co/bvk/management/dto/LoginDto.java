@@ -15,4 +15,6 @@ public class LoginDto {
 
     private String email;
     private String password;
+    private Boolean isGoogle;
+    private String idGoogle;
 }

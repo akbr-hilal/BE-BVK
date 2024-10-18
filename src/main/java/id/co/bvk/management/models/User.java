@@ -8,7 +8,7 @@ import jakarta.persistence.*;
  * @author Akbr
  */
 @Entity
-@Table(name = "users", schema = "bvk")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -27,13 +27,13 @@ public class User {
     @Column(length = 255)
     private String name;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    @Column(name = "is_google_login", nullable = false)
+    @Column(name = "is_google_login", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean isGoogleLogin = false; // Default is FALSE
 
     @PrePersist

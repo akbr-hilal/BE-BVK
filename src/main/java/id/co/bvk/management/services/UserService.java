@@ -31,7 +31,9 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(password));
         }
         user.setName(name);
-        return userRepository.save(user);
+        userRepository.save(user);
+        userRepository.flush();
+        return user;
     }
 
     public Optional<User> findByEmail(String email) {

@@ -27,6 +27,7 @@ public class AuthController {
         this.authService = authService;
         this.userService = userService;
     }
+
     @GetMapping("/test")
     public String Test() {
         return "Auth Service successfully run";
@@ -34,38 +35,52 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterDto dto) {
-        if(("".equals(dto.getEmail()) || dto.getEmail() == null) && ("".equals(dto.getPassword()) || dto.getPassword() == null)){
-             return ResponseEntity.badRequest().body("Email and Password is Required");
-        } else if ("".equals(dto.getEmail()) || dto.getEmail() == null){
-             return ResponseEntity.badRequest().body("Email is Required");
-        } else if ("".equals(dto.getPassword()) || dto.getPassword() == null){
-             return ResponseEntity.badRequest().body("Password is Required");
+        System.out.println("isGoogleRegister: " + dto.getIsGoogle());
+        if (dto.getIsGoogle()) {
+            userService.registerUser(dto.getEmail(), "", dto.getName(), dto.getIdGoogle());
+            return ResponseEntity.ok("User registered successfully");
+        } else {
+            if (("".equals(dto.getName()) || dto.getName() == null) && ("".equals(dto.getEmail()) || dto.getEmail() == null) && ("".equals(dto.getPassword()) || dto.getPassword() == null)) {
+                return ResponseEntity.badRequest().body("Name, Email and Password is Required");
+            } else if ("".equals(dto.getName()) || dto.getName() == null) {
+                return ResponseEntity.badRequest().body("Name is Required");
+            } else if ("".equals(dto.getEmail()) || dto.getEmail() == null) {
+                return ResponseEntity.badRequest().body("Email is Required");
+            } else if ("".equals(dto.getPassword()) || dto.getPassword() == null) {
+                return ResponseEntity.badRequest().body("Password is Required");
+            }
+            userService.registerUser(dto.getEmail(), dto.getPassword(), dto.getName(), "");
+            return ResponseEntity.ok("User registered successfully");
         }
-        userService.registerUser(dto.getEmail(), dto.getPassword(),dto.getName(), "");
-        return ResponseEntity.ok("User registered successfully");
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto dto) {
-        if(("".equals(dto.getEmail()) || dto.getEmail() == null) && ("".equals(dto.getPassword()) || dto.getPassword() == null)){
-             return ResponseEntity.badRequest().body("Email and Password is Required");
-        } else if ("".equals(dto.getEmail()) || dto.getEmail() == null){
-             return ResponseEntity.badRequest().body("Email is Required");
-        } else if ("".equals(dto.getPassword()) || dto.getPassword() == null){
-             return ResponseEntity.badRequest().body("Password is Required");
-        }
-        String token = authService.login(dto.getEmail(), dto.getPassword());
-        return ResponseEntity.ok(token);
-    }
-
-    @PostMapping("/login/google")
-    public ResponseEntity<?> loginWithGoogle(@RequestBody String token) {
-        User user = authService.loginWithGoogle(token);
-        if (user != null) {
-            return ResponseEntity.ok("User logged in: " + user.getEmail());
+        System.out.println("isGoogle: " + dto.getIsGoogle());
+        if (dto.getIsGoogle()) {
+            String token = authService.loginWithGoogle(dto.getEmail(), dto.getIdGoogle());
+            return ResponseEntity.ok(token);
         } else {
-            return ResponseEntity.badRequest().body("Invalid token or user not found.");
+            if (("".equals(dto.getEmail()) || dto.getEmail() == null) && ("".equals(dto.getPassword()) || dto.getPassword() == null)) {
+                return ResponseEntity.badRequest().body("Email and Password is Required");
+            } else if ("".equals(dto.getEmail()) || dto.getEmail() == null) {
+                return ResponseEntity.badRequest().body("Email is Required");
+            } else if ("".equals(dto.getPassword()) || dto.getPassword() == null) {
+                return ResponseEntity.badRequest().body("Password is Required");
+            }
+            String token = authService.login(dto.getEmail(), dto.getPassword());
+            return ResponseEntity.ok(token);
         }
+
     }
 
+//    @PostMapping("/login/google")
+//    public ResponseEntity<?> loginWithGoogle(@RequestBody String token) {
+//        User user = authService.loginWithGoogle(token);
+//        if (user != null) {
+//            return ResponseEntity.ok("User logged in: " + user.getEmail());
+//        } else {
+//            return ResponseEntity.badRequest().body("Invalid token or user not found.");
+//        }
+//    }
 }

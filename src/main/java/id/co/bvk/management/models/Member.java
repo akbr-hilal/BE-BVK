@@ -1,9 +1,9 @@
 package id.co.bvk.management.models;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.*;
-import lombok.Data;
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -11,8 +11,10 @@ import lombok.Data;
  */
 @Entity
 @Table(name = "members")
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Member {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,29 +25,32 @@ public class Member {
     @Column(nullable = false)
     private String position;
 
-    private String pictureUrl;
+    @Column(name = "pictureBase64", columnDefinition = "TEXT")
+    @Lob
+    private String picture;
 
-    private String superior; // Menyimpan nama atasan
+    @Column(name = "reports_to")
+    private String reportsTo;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public Long getId() {
-        return this.id;
+        return id;
     }
 
     public void setId(Long id) {
@@ -53,7 +58,7 @@ public class Member {
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public void setName(String name) {
@@ -61,31 +66,31 @@ public class Member {
     }
 
     public String getPosition() {
-        return this.position;
+        return position;
     }
 
     public void setPosition(String position) {
         this.position = position;
     }
 
-    public String getPictureUrl() {
-        return this.pictureUrl;
+    public String getPicture() {
+        return picture;
     }
 
-    public void setPictureUrl(String pictureUrl) {
-        this.pictureUrl = pictureUrl;
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
-    public String getSuperior() {
-        return this.superior;
+    public String getReportsTo() {
+        return reportsTo;
     }
 
-    public void setSuperior(String superior) {
-        this.superior = superior;
+    public void setReportsTo(String reportsTo) {
+        this.reportsTo = reportsTo;
     }
 
     public LocalDateTime getCreatedAt() {
-        return this.createdAt;
+        return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
@@ -93,7 +98,7 @@ public class Member {
     }
 
     public LocalDateTime getUpdatedAt() {
-        return this.updatedAt;
+        return updatedAt;
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {

@@ -14,33 +14,51 @@ import java.util.Optional;
  */
 @Service
 public class AuthService {
-    
-    
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
 
-    // private final String GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID";
-    public AuthService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public class AuthResponse {
+
+        private final String token;
+        private final String name;
+
+        public AuthResponse(String token, String name) {
+            this.token = token;
+            this.name = name;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
-    
-    public String login(String email, String password) {
+
+    public AuthResponse login(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
-        
+
         if (passwordEncoder.matches(password, user.getPassword())) {
-            return jwtUtil.generateToken(user.getEmail());
+            String token = jwtUtil.generateToken(user.getEmail(), user.getName());
+            return new AuthResponse(token, user.getName());
         } else {
             throw new IllegalArgumentException("Invalid email or password");
         }
     }
-    
-    public String loginWithGoogle(String email, String idGoogle) {
+
+    public AuthResponse loginWithGoogle(String email, String idGoogle) {
         User user = userRepository.findByGoogleIdAndEmail(idGoogle, email)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid account Google"));
-        return jwtUtil.generateToken(user.getEmail());        
+        String tokenJwt = jwtUtil.generateToken(user.getEmail(), user.getName());
+        return new AuthResponse(tokenJwt, user.getName());
     }
 }

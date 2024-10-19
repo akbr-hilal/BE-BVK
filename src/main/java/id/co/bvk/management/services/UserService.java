@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import id.co.bvk.management.models.User;
 import id.co.bvk.management.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -13,13 +14,10 @@ import id.co.bvk.management.repository.UserRepository;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
+    
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    // Constructor-based dependency injection
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public User registerUser(String email, String password, String name, String googleId) {
         User user = new User();

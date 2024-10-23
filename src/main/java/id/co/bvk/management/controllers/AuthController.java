@@ -45,6 +45,7 @@ public class AuthController {
             userService.registerUser(dto.getEmail(), "", dto.getName(), dto.getIdGoogle());
             return ResponseEntity.ok("User registered successfully");
         } else {
+            System.out.println("register non google");
             if (("".equals(dto.getName()) || dto.getName() == null) && ("".equals(dto.getEmail()) || dto.getEmail() == null) && ("".equals(dto.getPassword()) || dto.getPassword() == null)) {
                 return ResponseEntity.badRequest().body("Name, Email and Password is Required");
             } else if ("".equals(dto.getName()) || dto.getName() == null) {

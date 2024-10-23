@@ -46,7 +46,10 @@ public class AuthService {
     public AuthResponse login(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
-
+        
+        if(user.getIsGoogleLogin()){
+             throw new IllegalArgumentException("Please Login Using Google");
+        }
         if (passwordEncoder.matches(password, user.getPassword())) {
             String token = jwtUtil.generateToken(user.getEmail(), user.getName());
             return new AuthResponse(token, user.getName());

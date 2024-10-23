@@ -16,17 +16,20 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-    
+
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public User registerUser(String email, String password, String name, String googleId) {
         User user = new User();
         user.setEmail(email);
-        if (googleId != null || !"".equals(googleId)) {
+        System.out.println("googleID: " + !googleId.isEmpty());
+        if (!"".equals(googleId) || !googleId.isEmpty()) {
             user.setGoogleId(googleId);
             user.setIsGoogleLogin(true);
         } else {
+            System.out.println("password encoder: " + passwordEncoder.encode(password) + " password: " + password);
             user.setPassword(passwordEncoder.encode(password));
+            user.setIsGoogleLogin(false);
         }
         user.setName(name);
         userRepository.save(user);
